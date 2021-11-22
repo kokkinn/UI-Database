@@ -1,26 +1,61 @@
 import sys
+
+from PyQt5.QtCore import QEventLoop, QTimer, QTime
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets
 from PyQt5.Qt import Qt
+import time
 
 from PyQt5.QtWidgets import QDialog, QApplication, QTableWidget
 import sqlite3
+
+
+class info(QtWidgets.QDialog):
+    def __init__(self):
+        super(info, self).__init__()
+        loadUi("C:\\Users\\kokki\\Desktop\\Solo\\info.ui", self)
+        self.pushButton.clicked.connect(self.goback)
+
+    def goback(self):
+        self.close()
 
 
 class MainWindow(QtWidgets.QDialog):
     def __init__(self):
         super(MainWindow, self).__init__()
         loadUi("C:\\Users\\kokki\\Desktop\\Solo\\new.ui", self)
-        self.button.setText('Ku')
+        timer = QTimer(self)
+        timer.timeout.connect(self.disp)
+        timer.start(1000)
+
         self.button.clicked.connect(self.loaddata)
 
         self.table.setRowCount(1)
+        self.pushButton.clicked.connect(self.goinfo)
+        self.findgenre.clicled.connect(self.filltable)
+    def filltable:
+
+
+    def goinfo(self):
+        self.myOtherWindow = info()
+        self.myOtherWindow.show()
+        # mainwindow = info()
+        # widget.addWidget(mainwindow)
+        # widget.setFixedHeight(400)
+        # widget.setFixedWidth(400)
+        #
+        # widget.setCurrentIndex(widget.currentIndex() + 1)
 
     # def enterkey(self, event):
     #     if event.key() == Qt.Key_Enter:
     #
     # def butpres(self):
     #     self.loaddata()
+
+    def disp(self):
+        current_time = QTime.currentTime()
+        disptx = current_time.toString('hh:mm:ss')
+        self.label_6.setText(disptx)
 
     def loaddata(self):
 
@@ -31,7 +66,8 @@ class MainWindow(QtWidgets.QDialog):
         name = self.textfield_2.toPlainText()
 
         cur = connection.cursor()
-        query = f"SELECT * FROM info WHERE Name = '{name}'"
+        query = f"SELECT i.ID, i.Name, i.Surname, i.City, i.Age, g.Genre FROM info i JOIN Genre g on " \
+                f"i.GenreLove = g.ID WHERE Name = '{name}'"
         cur.execute(query)
         connection.commit()
         res = cur.fetchall()
@@ -45,6 +81,7 @@ class MainWindow(QtWidgets.QDialog):
         self.dispsurname.setText(f"{res[0][2]}")
         self.dispage.setText(f"{res[0][3]}")
         self.dispcity.setText(f"{res[0][4]}")
+        self.dispgenre.setText(f"{res[0][5]}")
         # for row in res:
         #     self.table.setItem(tablerow, 0, QtWidgets.QTableWidgetItem((row[1])))
         #     self.table.setItem(tablerow, 1, QtWidgets.QTableWidgetItem(row[2]))
@@ -155,8 +192,11 @@ class regform(QtWidgets.QDialog):
 
             self.label_7.setText("This username is already taken")
             print("Not UWU")
-
-
+        self.label_7.setText("Registered Successfully")
+        loop = QEventLoop()
+        QTimer.singleShot(2000, loop.quit)
+        loop.exec_()
+        self.gotomain()
 
         # connection = sqlite3.connect('C:\\Users\\kokki\\Desktop\\Solo\\dbdata.db')
         # cur = connection.cursor()
@@ -167,11 +207,11 @@ class regform(QtWidgets.QDialog):
 
 
 app = QtWidgets.QApplication(sys.argv)
-window = logorreg()
+window = MainWindow()
 
 widget = QtWidgets.QStackedWidget()
 widget.addWidget(window)
-widget.setFixedHeight(600)
-widget.setFixedWidth(600)
+widget.setFixedHeight(500)
+widget.setFixedWidth(700)
 widget.show()
 app.exec_()
