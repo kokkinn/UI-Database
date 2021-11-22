@@ -32,8 +32,25 @@ class MainWindow(QtWidgets.QDialog):
 
         self.table.setRowCount(1)
         self.pushButton.clicked.connect(self.goinfo)
-        self.findgenre.clicled.connect(self.filltable)
-    def filltable:
+        self.findgenre.clicked.connect(self.filltable)
+    def filltable(self):
+
+        a = self.comboBox.currentIndex()
+        connection = sqlite3.connect('C:\\Users\\kokki\\Desktop\\Solo\\dbdata.db')
+        cur = connection.cursor()
+        query = (f"SELECT u.username, i.City FROM info i join Genre g on i.ID = g.ID "
+                 f"JOIN users u on i.ID = u.id WHERE i.GenreLove = {a}")
+        cur.execute(query)
+        connection.commit()
+        res = cur.fetchall()
+        self.table.setRowCount(len(res))
+        tablerow = 0
+        for row in res:
+            self.table.setItem(tablerow, 0, QtWidgets.QTableWidgetItem((row[0])))
+            self.table.setItem(tablerow, 1, QtWidgets.QTableWidgetItem(row[1]))
+
+            tablerow += 1
+
 
 
     def goinfo(self):
@@ -58,6 +75,13 @@ class MainWindow(QtWidgets.QDialog):
         self.label_6.setText(disptx)
 
     def loaddata(self):
+
+        # for row in res:
+        #     self.table.setItem(tablerow, 0, QtWidgets.QTableWidgetItem((row[1])))
+        #     self.table.setItem(tablerow, 1, QtWidgets.QTableWidgetItem(row[2]))
+        #     self.table.setItem(tablerow, 2, QtWidgets.QTableWidgetItem((row[3])))
+        #     self.table.setItem(tablerow, 3, QtWidgets.QTableWidgetItem(str(row[4])))
+        #     tablerow += 1
 
         connection = sqlite3.connect('C:\\Users\\kokki\\Desktop\\Solo\\dbdata.db')
         # mytext = self.textfield.toPlainText()
@@ -166,6 +190,7 @@ class regform(QtWidgets.QDialog):
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
     def regged(self):
+
         connection = sqlite3.connect('C:\\Users\\kokki\\Desktop\\Solo\\dbdata.db')
         cur = connection.cursor()
 
@@ -181,7 +206,12 @@ class regform(QtWidgets.QDialog):
             surname = self.regsurname.toPlainText()
             city = self.regcity.toPlainText()
             age = self.regage.toPlainText()
-            query = f"insert into info (Name, Surname, Age, City) values ('{name}','{surname}','{age}','{city}')"
+            genre = self.reggenre.toPlainText()
+            if not genre.isdigit():
+                break
+
+
+            query = f"insert into info (Name, Surname, Age, City, GenreLove) values ('{name}','{surname}','{age}','{city}','{genre}')"
             query2 = f"insert into users (username, password) values ('{username}', '{password}')"
             cur.execute(query)
             cur.execute(query2)
@@ -207,7 +237,7 @@ class regform(QtWidgets.QDialog):
 
 
 app = QtWidgets.QApplication(sys.argv)
-window = MainWindow()
+window = regform()
 
 widget = QtWidgets.QStackedWidget()
 widget.addWidget(window)
