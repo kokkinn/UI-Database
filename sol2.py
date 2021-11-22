@@ -38,8 +38,7 @@ class MainWindow(QtWidgets.QDialog):
         a = self.comboBox.currentIndex()
         connection = sqlite3.connect('C:\\Users\\kokki\\Desktop\\Solo\\dbdata.db')
         cur = connection.cursor()
-        query = (f"SELECT u.username, i.City FROM info i join Genre g on i.ID = g.ID "
-                 f"JOIN users u on i.ID = u.id WHERE i.GenreLove = {a}")
+        query = f"SELECT u.username, i.City FROM users u join info i on u.id = i.ID WHERE i.GenreLove = {a};"
         cur.execute(query)
         connection.commit()
         res = cur.fetchall()
@@ -99,13 +98,13 @@ class MainWindow(QtWidgets.QDialog):
             self.label.setText("Error, no such user found")
         else:
             self.label.setText(f"User: {name}")
-        tablerow = 0
+            tablerow = 0
         # self.table.setRowCount(len(res))
-        self.dispname.setText(f"{res[0][1]}")
-        self.dispsurname.setText(f"{res[0][2]}")
-        self.dispage.setText(f"{res[0][3]}")
-        self.dispcity.setText(f"{res[0][4]}")
-        self.dispgenre.setText(f"{res[0][5]}")
+            self.dispname.setText(f"{res[0][1]}")
+            self.dispsurname.setText(f"{res[0][2]}")
+            self.dispage.setText(f"{res[0][3]}")
+            self.dispcity.setText(f"{res[0][4]}")
+            self.dispgenre.setText(f"{res[0][5]}")
         # for row in res:
         #     self.table.setItem(tablerow, 0, QtWidgets.QTableWidgetItem((row[1])))
         #     self.table.setItem(tablerow, 1, QtWidgets.QTableWidgetItem(row[2]))
@@ -199,34 +198,38 @@ class regform(QtWidgets.QDialog):
         cur.execute(query)
         res = cur.fetchall()
         if not res:
-            print("UWU")
-            self.label_7.setText("")
-            password = self.regpassword.toPlainText()
-            name = self.regname.toPlainText()
-            surname = self.regsurname.toPlainText()
-            city = self.regcity.toPlainText()
-            age = self.regage.toPlainText()
-            genre = self.reggenre.toPlainText()
-            if not genre.isdigit():
+            while True:
+                print("UWU")
+                self.label_7.setText("")
+                password = self.regpassword.toPlainText()
+                name = self.regname.toPlainText()
+                surname = self.regsurname.toPlainText()
+                city = self.regcity.toPlainText()
+                age = self.regage.toPlainText()
+                genre = self.reggenre.currentIndex()
+                if not str(genre).isdigit():
+                    self.label_7.setText("Fuck you")
+                    break
+
+
+                query = f"insert into info (Name, Surname, Age, City, GenreLove) values ('{name}','{surname}','{age}','{city}','{genre}')"
+                query2 = f"insert into users (username, password) values ('{username}', '{password}')"
+                cur.execute(query)
+                cur.execute(query2)
+                connection.commit()
+                self.label_7.setText("Data Gone")
+                self.label_7.setText("Registered Successfully")
+                loop = QEventLoop()
+                QTimer.singleShot(2000, loop.quit)
+                loop.exec_()
+                self.gotomain()
                 break
-
-
-            query = f"insert into info (Name, Surname, Age, City, GenreLove) values ('{name}','{surname}','{age}','{city}','{genre}')"
-            query2 = f"insert into users (username, password) values ('{username}', '{password}')"
-            cur.execute(query)
-            cur.execute(query2)
-            connection.commit()
-            self.label_7.setText("Data Gone")
 
         else:
 
             self.label_7.setText("This username is already taken")
             print("Not UWU")
-        self.label_7.setText("Registered Successfully")
-        loop = QEventLoop()
-        QTimer.singleShot(2000, loop.quit)
-        loop.exec_()
-        self.gotomain()
+
 
         # connection = sqlite3.connect('C:\\Users\\kokki\\Desktop\\Solo\\dbdata.db')
         # cur = connection.cursor()
@@ -237,7 +240,7 @@ class regform(QtWidgets.QDialog):
 
 
 app = QtWidgets.QApplication(sys.argv)
-window = regform()
+window = MainWindow()
 
 widget = QtWidgets.QStackedWidget()
 widget.addWidget(window)
