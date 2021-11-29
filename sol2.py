@@ -11,7 +11,7 @@ usrn = None
 class info(QtWidgets.QDialog):
     def __init__(self):
         super(info, self).__init__()
-        loadUi("C:\\Users\\kokki\\Desktop\\Solo\\info.ui", self)
+        loadUi("info.ui", self)
         self.pushButton.clicked.connect(self.goback)
 
     def goback(self):
@@ -21,7 +21,7 @@ class info(QtWidgets.QDialog):
 class logorreg(QtWidgets.QDialog):
     def __init__(self):
         super(logorreg, self).__init__()
-        loadUi("C:\\Users\\kokki\\Desktop\\Solo\\logorreg.ui", self)
+        loadUi("logorreg.ui", self)
         self.logbut.clicked.connect(self.gologform)
         self.regbut.clicked.connect(self.goregform)
 
@@ -42,7 +42,7 @@ userm = None
 class logform(QtWidgets.QDialog):
     def __init__(self):
         super(logform, self).__init__()
-        loadUi("C:\\Users\\kokki\\Desktop\\Solo\\logform.ui", self)
+        loadUi("logform.ui", self)
         self.pushButton23.clicked.connect(self.gobackRrL)
         self.gologin.clicked.connect(self.logged)
 
@@ -59,7 +59,7 @@ class logform(QtWidgets.QDialog):
     def logged(self):
         password = self.passwordtext.toPlainText()
         username = self.usernametext.toPlainText()
-        connection = sqlite3.connect('C:\\Users\\kokki\\Desktop\\Solo\\dbdata.db')
+        connection = sqlite3.connect('dbdata.db')
         cur = connection.cursor()
         query = f'select 1 from users WHERE username = "{username}" and password = "{password}"'
         cur.execute(query)
@@ -80,7 +80,7 @@ class logform(QtWidgets.QDialog):
 class regform(QtWidgets.QDialog):
     def __init__(self):
         super(regform, self).__init__()
-        loadUi("C:\\Users\\kokki\\Desktop\\Solo\\regform.ui", self)
+        loadUi("regform.ui", self)
         self.pushButton21.clicked.connect(self.gobackRrL)
         self.pushButton23.clicked.connect(self.regged)
 
@@ -95,8 +95,11 @@ class regform(QtWidgets.QDialog):
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
     def regged(self):
-        connection = sqlite3.connect('C:\\Users\\kokki\\Desktop\\Solo\\dbdata.db')
+        connection = sqlite3.connect('dbdata.db')
         cur = connection.cursor()
+        self.usrnp.setText("")
+        self.pssp.setText("")
+        self.agp.setText("")
         while True:
             usrnpr = None
             passpr = None
@@ -146,7 +149,7 @@ class regform(QtWidgets.QDialog):
 class MainWindow(QtWidgets.QDialog):
     def __init__(self):
         super(MainWindow, self).__init__()
-        loadUi("C:\\Users\\kokki\\Desktop\\Solo\\new.ui", self)
+        loadUi("new.ui", self)
         timer = QTimer(self)
         timer.timeout.connect(self.disp)
         timer.start(1000)
@@ -158,7 +161,7 @@ class MainWindow(QtWidgets.QDialog):
 
     def filltable(self):
         a = self.comboBox.currentIndex()
-        connection = sqlite3.connect('C:\\Users\\kokki\\Desktop\\Solo\\dbdata.db')
+        connection = sqlite3.connect('dbdata.db')
         cur = connection.cursor()
         query = f"SELECT u.username, i.City FROM users u join info i on u.id = i.ID WHERE i.GenreLove = {a};"
         cur.execute(query)
@@ -182,7 +185,7 @@ class MainWindow(QtWidgets.QDialog):
         self.label_6.setText(disptx)
 
     def loaddata(self):
-        connection = sqlite3.connect('C:\\Users\\kokki\\Desktop\\Solo\\dbdata.db')
+        connection = sqlite3.connect('dbdata.db')
         name = self.textfield_2.toPlainText()
 
         cur = connection.cursor()
@@ -203,7 +206,7 @@ class MainWindow(QtWidgets.QDialog):
 
 
 app = QtWidgets.QApplication(sys.argv)
-window = MainWindow()
+window = logorreg()
 
 widget = QtWidgets.QStackedWidget()
 widget.addWidget(window)
